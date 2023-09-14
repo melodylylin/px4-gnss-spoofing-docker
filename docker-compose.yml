@@ -1,0 +1,40 @@
+version: "3.9"
+
+volumes:
+
+    # remembers gz config, downloaded models etc
+    gz_config:
+
+services:
+
+  px4-gnss-spoofing:
+    environment:
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+      - DISPLAY=$DISPLAY
+      - RUN_VNC=false
+      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
+      - PX4_GZ_WORLD=AbuDhabi
+      - PX4_HOME_LAT=24.484043629238872
+      - PX4_HOME_LON=54.36068616768677
+      - PX4_HOME_ALT=0
+      - ROS_DOMAIN_ID=1
+      - PX4_MICRODDS_NS=px4_1
+    image: px4-gnss-spoofing
+    # image: ${REGISTRY}/cognipilot/dream:${TAG}
+    build:
+       dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    privileged: true
+    hostname: px4-gnss-spoofing
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    volumes:
+      - ./work:/home/user/work
+      - gz_config:/home/user/.gz
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}
+      - $HOME/gnupg:/home/user/.gnupg
+      - $HOME/.ssh:/home/user/.ssh
+      - $HOME/.gitconfig:/home/user/.gitconfig
